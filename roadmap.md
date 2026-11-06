@@ -1,4 +1,5 @@
-- [ ] Inspect all four original archive files and extract/verify the exact location dataset.
-- [ ] Implement the browser-only Sholok app with local persistence and all management sections.
-- [ ] Add focused tests for the location counts and rate-group business rules; run tests and verify preview workflows/responsive layouts.
-- [ ] Re-read roadmap and migration ledger; update completion status and remaining limits.
+- [x] Inspect the original archive and verify the location dataset and management feature inventory.
+- [x] Implement the browser-only Sholok app with local persistence and the management sections.
+- [ ] Increase text sizes for readability without breaking compact screens.
+- [ ] Verify rate-group creation, zone assignment, rate editing, and responsive layouts in the preview.
+- [ ] Re-read roadmap and report any remaining unverified details honestly.
