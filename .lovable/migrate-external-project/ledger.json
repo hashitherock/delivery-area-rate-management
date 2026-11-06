@@ -1,0 +1,12 @@
+{
+  "source": "code-archive",
+  "capabilities": [
+    {"capability":"application code and interface","source":"uploaded HTML/CSS/JS archive","outcome":"rebuild in TanStack React preview","status":"in_progress","next_action":"preserve all archive features and verify the main workflows"},
+    {"capability":"database schema and records","source":"none; source specifies browser localStorage only","outcome":"not applicable","status":"not_applicable","next_action":"none"},
+    {"capability":"authentication identities and authorization","source":"none; no authentication in source","outcome":"not applicable","status":"not_applicable","next_action":"none"},
+    {"capability":"uploaded file bytes","source":"source ZIP contains HTML/CSS/JS/README only","outcome":"source inspected; no user media to migrate","status":"verified","next_action":"none"},
+    {"capability":"external providers and public endpoints","source":"none required by source; external location fetch will be removed","outcome":"bundle location data locally","status":"in_progress","next_action":"verify no external runtime request remains"},
+    {"capability":"callbacks, webhooks, schedules, and secrets","source":"none detected","outcome":"not applicable","status":"not_applicable","next_action":"none"},
+    {"capability":"cutover and production verification","source":"preview not yet published","outcome":"preview verification pending","status":"pending","next_action":"test required app behavior and responsive layouts"}
+  ]
+}

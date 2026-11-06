@@ -1,0 +1,4 @@
+- [ ] Inspect all four original archive files and extract/verify the exact location dataset.
+- [ ] Implement the browser-only Sholok app with local persistence and all management sections.
+- [ ] Add focused tests for the location counts and rate-group business rules; run tests and verify preview workflows/responsive layouts.
+- [ ] Re-read roadmap and migration ledger; update completion status and remaining limits.
