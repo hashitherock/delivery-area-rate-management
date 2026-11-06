@@ -386,6 +386,11 @@ input, select { color: var(--foreground); }
 .change-flow strong { text-align: right; }
 .dialog-table { max-height: 55vh; }
 .fatal-state { display: grid; min-height: 100vh; place-items: center; padding: 24px; color: var(--destructive); text-align: center; }
+.storage-warning { display: flex; align-items: center; gap: 10px; margin: 0 0 15px; padding: 11px; border: 1px solid oklch(0.89 0.06 82); border-radius: 4px; background: var(--gold); color: var(--gold-ink); }
+.storage-warning > svg { width: 17px; height: 17px; flex: 0 0 17px; }
+.storage-warning span { display: grid; flex: 1; gap: 2px; }
+.storage-warning strong { font-size: 10px; }
+.storage-warning small { font-size: 9px; }
 .mobile-scrim { display: none; }
 
 @media (min-width: 1600px) {
