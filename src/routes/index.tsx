@@ -43,7 +43,6 @@ import {
   normalize,
   parseSlabs,
   rateForWeight,
-  safeReadState,
   serializeBackup,
   slabText,
   statusFor,
@@ -96,6 +95,7 @@ export const Route = createFileRoute("/")({
 function SholokApp() {
   const [state, setState] = useState<SholokState>(() => makeInitialState());
   const [ready, setReady] = useState(false);
+  const [storageWarning, setStorageWarning] = useState<string | null>(null);
   const [section, setSection] = useState<Section>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -103,18 +103,23 @@ function SholokApp() {
   const [showUnassigned, setShowUnassigned] = useState(false);
 
   useEffect(() => {
-    setState(safeReadState(window.localStorage));
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) setState(validateState(JSON.parse(raw) as unknown));
+    } catch {
+      setStorageWarning("Saved browser data could not be validated. Your current saved copy is being left untouched; import a backup or reset only if you choose.");
+    }
     setReady(true);
   }, []);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || storageWarning) return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, data: state }));
     } catch {
       toast.error("Your browser could not save this change. Export a backup and free some browser storage.");
     }
-  }, [state, ready]);
+  }, [state, ready, storageWarning]);
 
   useEffect(() => {
     const handleNavigate = (event: Event) => {
@@ -186,6 +191,7 @@ function SholokApp() {
         </header>
 
         <div className="page-content">
+          {storageWarning ? <div className="storage-warning" role="alert"><ShieldCheck /><span><strong>Saved data was protected.</strong><small>{storageWarning}</small></span><Button variant="outline" size="sm" onClick={() => setSection("backup")}>Backup & restore</Button></div> : null}
           {section === "dashboard" ? <Dashboard state={state} areas={areas} assignments={assignments} onReport={() => setShowUnassigned(true)} /> : null}
           {section === "areas" ? <AreasSection state={state} areas={areas} assignments={assignments} setState={setState} openModal={setModal} /> : null}
           {section === "groups" ? <GroupsSection state={state} assignments={assignments} setState={setState} openModal={setModal} onView={(group) => document.dispatchEvent(new CustomEvent("sholok:group-view", { detail: group.id }))} /> : null}
