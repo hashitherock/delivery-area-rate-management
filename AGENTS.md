@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Application architecture
+
+- Keep the Sholok management app browser-only, with versioned localStorage persistence and bundled Bangladesh locations, because the source requirements explicitly prohibit a backend and external data fetching.
