@@ -161,18 +161,55 @@ export function validateState(value: unknown): SholokState {
   const areas = allAreas(state);
   const areaIds = new Set(areas.map((area) => area.id));
   const groupIds = new Set(Object.keys(state.groups));
+  const builtInIds = new Set(allAreas(makeInitialState()).map((area) => area.id));
+  if (!state.customAreas.every((area) => isRecord(area) && typeof area.id === "string" && area.id.length > 0 && typeof area.division === "string" && typeof area.district === "string" && typeof area.area === "string" && area.source === "custom")) {
+    throw new Error("The backup contains an invalid custom delivery area.");
+  }
+  if (!state.customDistricts.every((district) => isRecord(district) && typeof district.id === "string" && typeof district.division === "string" && typeof district.name === "string")) {
+    throw new Error("The backup contains an invalid custom district.");
+  }
+  if (!Object.values(state.statuses).every((status) => typeof status === "boolean") || Object.keys(state.statuses).some((id) => !areaIds.has(id))) {
+    throw new Error("The backup contains an invalid delivery-area status entry.");
+  }
+  if (Object.keys(state.areaOverrides).some((id) => !builtInIds.has(id))) {
+    throw new Error("The backup contains an override for an unknown built-in area.");
+  }
+  if (!Object.values(state.areaOverrides).every((area) => isRecord(area) && typeof area.division === "string" && typeof area.district === "string" && typeof area.area === "string")) {
+    throw new Error("The backup contains an invalid built-in area override.");
+  }
+  if (!Object.values(state.districtRenames).every((name) => typeof name === "string" && name.trim().length > 0)) {
+    throw new Error("The backup contains an invalid district rename.");
+  }
+  const groupNames = new Set<string>();
   for (const group of Object.values(state.groups)) {
-    if (!group.id || !DIVISION_ORDER.includes(group.store as (typeof DIVISION_ORDER)[number]) || !group.name || group.base <= 0 || group.additional <= 0) {
+    if (!isRecord(group) || !group.id || !DIVISION_ORDER.includes(group.store as (typeof DIVISION_ORDER)[number]) || !group.name?.trim() || !Number.isFinite(group.base) || group.base <= 0 || !Number.isFinite(group.additional) || group.additional <= 0 || !isRecord(group.slabs)) {
       throw new Error("The backup contains an invalid rate group.");
+    }
+    const groupKey = `${normalize(group.store)}||${normalize(group.name)}`;
+    if (groupNames.has(groupKey)) throw new Error("The backup contains duplicate rate-group names for one store.");
+    groupNames.add(groupKey);
+    for (const [weight, rate] of Object.entries(group.slabs)) {
+      if (!Number.isFinite(Number(weight)) || Number(weight) <= 0 || typeof rate !== "number" || !Number.isFinite(rate) || rate <= 0) {
+        throw new Error("The backup contains an invalid weight slab.");
+      }
     }
   }
   if (Object.keys(state.groups).length > MAX_RATE_GROUPS) throw new Error("The backup exceeds the 17 rate-group limit.");
+  const assignmentKeys = new Set<string>();
   for (const assignment of Object.values(state.assignments)) {
-    if (!areaIds.has(assignment.areaId) || !groupIds.has(assignment.groupId)) {
+    if (!isRecord(assignment) || typeof assignment.key !== "string" || typeof assignment.store !== "string" || typeof assignment.areaId !== "string" || typeof assignment.groupId !== "string" || !areaIds.has(assignment.areaId) || !groupIds.has(assignment.groupId)) {
       throw new Error("The backup contains an assignment with a missing area or rate group.");
     }
+    const pairKey = `${normalize(assignment.store)}||${assignment.areaId}`;
+    if (assignment.key !== `${assignment.store}||${assignment.areaId}` || assignmentKeys.has(pairKey)) {
+      throw new Error("The backup contains a duplicate or malformed store-area assignment.");
+    }
+    assignmentKeys.add(pairKey);
     if (state.groups[assignment.groupId]?.store !== assignment.store) {
       throw new Error("The backup contains an assignment with a mismatched store and rate group.");
+    }
+    if (assignment.rateOverride && ![assignment.rateOverride.base, assignment.rateOverride.rate2kg, assignment.rateOverride.rate3kg].every((rate) => typeof rate === "number" && Number.isFinite(rate) && rate > 0)) {
+      throw new Error("The backup contains invalid individual assignment rates.");
     }
   }
   return state;
