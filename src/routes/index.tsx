@@ -197,7 +197,7 @@ function SholokApp() {
           {section === "groups" ? <GroupsSection state={state} assignments={assignments} setState={setState} openModal={setModal} onView={(group) => document.dispatchEvent(new CustomEvent("sholok:group-view", { detail: group.id }))} /> : null}
           {section === "assign" ? <AssignmentSection state={state} areas={areas} assignments={assignments} setState={setState} /> : null}
           {section === "rates" ? <RatesSection state={state} assignments={assignments} openModal={setModal} setState={setState} /> : null}
-          {section === "backup" ? <BackupSection state={state} setState={setState} /> : null}
+          {section === "backup" ? <BackupSection state={state} setState={setState} onRecovery={() => setStorageWarning(null)} /> : null}
         </div>
         <footer className="app-footer"><span>SHOLOK · Delivery operations</span><span>Changes are stored in this browser only</span></footer>
       </main>
@@ -388,7 +388,7 @@ function RatesSection({ state, assignments, openModal, setState }: { state: Shol
   </>;
 }
 
-function BackupSection({ state, setState }: { state: SholokState; setState: React.Dispatch<React.SetStateAction<SholokState>> }) {
+function BackupSection({ state, setState, onRecovery }: { state: SholokState; setState: React.Dispatch<React.SetStateAction<SholokState>>; onRecovery: () => void }) {
   const [importing, setImporting] = useState(false);
   const exportBackup = () => {
     downloadText(`sholok-backup-${new Date().toISOString().slice(0, 10)}.json`, serializeBackup(state), "application/json;charset=utf-8");
@@ -400,7 +400,7 @@ function BackupSection({ state, setState }: { state: SholokState; setState: Reac
       const parsed: unknown = JSON.parse(await file.text());
       const validated = validateState(parsed);
       if (!window.confirm("Replace the data currently saved in this browser with the validated backup?")) return;
-      setState(validated); toast.success("Backup restored successfully");
+      setState(validated); onRecovery(); toast.success("Backup restored successfully");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "This backup could not be read.");
     } finally { setImporting(false); }
@@ -409,7 +409,7 @@ function BackupSection({ state, setState }: { state: SholokState; setState: Reac
     <PageIntro eyebrow="DATA SAFETY" title="Backup & restore" description="Export a complete copy of your local settings or restore a previously exported backup." />
     <section className="backup-grid"><article className="surface backup-card"><div className="backup-icon export"><Download /></div><span className="eyebrow">SAVE A COPY</span><h2>Export backup</h2><p>Download your rate groups, custom areas and districts, assignments, status settings, and rate overrides as a JSON file.</p><div className="backup-includes"><span><Check /> {Object.keys(state.groups).length} rate groups</span><span><Check /> {state.customAreas.length} custom areas</span><span><Check /> {Object.keys(state.assignments).length} assignments</span></div><Button onClick={exportBackup}><Download /> Export JSON backup</Button></article>
       <article className="surface backup-card"><div className="backup-icon import"><FileUp /></div><span className="eyebrow">RESTORE A COPY</span><h2>Import backup</h2><p>Choose a Sholok JSON backup. The file is checked before it replaces your current browser data.</p><div className="file-drop"><FileUp /><strong>{importing ? "Choose a backup file…" : "Select a backup file"}<small>JSON files exported from Sholok</small></strong><input aria-label="Import JSON backup" type="file" accept="application/json,.json" onChange={(event) => { setImporting(true); void importBackup(event.target.files?.[0]); event.currentTarget.value = ""; }} /></div><span className="warning-copy"><CircleHelp /> Importing replaces the current saved settings in this browser.</span></article></section>
-    <section className="surface reset-panel"><div className="reset-icon"><Trash2 /></div><div><h2>Reset application data</h2><p>Remove locally saved rate groups, custom areas, assignments, status changes, and overrides. The built-in Bangladesh location list remains intact.</p></div><Button variant="outline" onClick={() => { if (!window.confirm("Reset all Sholok application data in this browser? Built-in Bangladesh locations will remain.")) return; try { window.localStorage.removeItem(STORAGE_KEY); setState(makeInitialState()); toast.success("Application data reset"); } catch { toast.error("Your browser could not clear the saved data."); } }}>Reset local data</Button></section>
+    <section className="surface reset-panel"><div className="reset-icon"><Trash2 /></div><div><h2>Reset application data</h2><p>Remove locally saved rate groups, custom areas, assignments, status changes, and overrides. The built-in Bangladesh location list remains intact.</p></div><Button variant="outline" onClick={() => { if (!window.confirm("Reset all Sholok application data in this browser? Built-in Bangladesh locations will remain.")) return; try { window.localStorage.removeItem(STORAGE_KEY); setState(makeInitialState()); onRecovery(); toast.success("Application data reset"); } catch { toast.error("Your browser could not clear the saved data."); } }}>Reset local data</Button></section>
     <div className="browser-note"><ShieldCheck /><span><strong>Local to this browser</strong><small>Saved changes do not sync to other devices or browsers. Keep a backup if you need to transfer your settings.</small></span></div>
   </>;
 }
@@ -544,7 +544,7 @@ function SwitchGroupModal({ assignment, state, setState, close }: { assignment: 
 function UnassignedDialog({ areas, assignments, state, onClose }: { areas: DeliveryArea[]; assignments: Assignment[]; state: SholokState; onClose: () => void }) {
   const assigned = new Set(assignments.map((item) => item.areaId));
   const unassigned = areas.filter((area) => !assigned.has(area.id));
-  return <DialogFrame title="Unassigned delivery areas" description={`${unassigned.length.toLocaleString()} areas have no valid rate-group assignment.`} close={onClose} wide><div className="data-table-wrap dialog-table"><table className="data-table"><thead><tr><th>Division</th><th>District</th><th>Delivery area</th><th>Status</th><th>Assignments</th></tr></thead><tbody>{unassigned.slice(0, 100).map((area) => <tr key={area.id}><td>{area.division}</td><td>{area.district}</td><td>{area.area}</td><td><span className={`status-label ${statusFor(state, area.id) ? "is-enabled" : "is-disabled"}`}>{statusFor(state, area.id) ? "Enabled" : "Disabled"}</span></td><td>{assignments.filter((item) => item.areaId === area.id).length}</td></tr>)}{unassigned.length > 100 ? <tr><td colSpan={5} className="empty-cell">Showing the first 100 of {unassigned.length.toLocaleString()} unassigned areas.</td></tr> : null}{!unassigned.length ? <tr><td colSpan={5} className="empty-cell">All delivery areas have at least one valid assignment.</td></tr> : null}</tbody></table></div><div className="modal-actions"><Button variant="outline" onClick={onClose}>Close report</Button></div></DialogFrame>;
+  return <DialogFrame title="Unassigned delivery areas" description={`${unassigned.length.toLocaleString()} areas have no valid rate-group assignment.`} close={onClose} wide><div className="data-table-wrap dialog-table"><table className="data-table"><thead><tr><th>Division</th><th>District</th><th>Delivery area</th><th>Status</th><th>Assignments</th></tr></thead><tbody>{unassigned.map((area) => <tr key={area.id}><td>{area.division}</td><td>{area.district}</td><td>{area.area}</td><td><span className={`status-label ${statusFor(state, area.id) ? "is-enabled" : "is-disabled"}`}>{statusFor(state, area.id) ? "Enabled" : "Disabled"}</span></td><td>{assignments.filter((item) => item.areaId === area.id).length}</td></tr>)}{!unassigned.length ? <tr><td colSpan={5} className="empty-cell">All delivery areas have at least one valid assignment.</td></tr> : null}</tbody></table></div><div className="modal-actions"><Button variant="outline" onClick={onClose}>Close report</Button></div></DialogFrame>;
 }
 
 function DialogFrame({ title, description, close, children, wide = false }: { title: string; description: string; close: () => void; children: React.ReactNode; wide?: boolean }) {
