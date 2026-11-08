@@ -431,7 +431,7 @@ input, select { color: var(--foreground); }
 }
 @media (max-width: 640px) {
   .sidebar, .sidebar-collapsed .sidebar { width: 270px; transform: translateX(-100%); }
-  .sidebar.mobile-open { transform: translateX(0); }
+  .sidebar.sidebar.mobile-open { transform: translateX(0); }
   .sidebar .brand-copy, .sidebar .nav-caption, .sidebar .nav-item span, .sidebar .sidebar-bottom small { display: initial; }
   .sidebar .brand-copy { display: flex; }
   .sidebar .sidebar-collapse { display: none; }
