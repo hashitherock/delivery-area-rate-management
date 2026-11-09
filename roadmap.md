@@ -4,4 +4,5 @@
 - [x] Verify rate-group creation, zone assignment, individual rate editing, and local saving in the preview.
 - [x] Check 375px mobile and 768px tablet layouts, including the labeled navigation drawer.
 - [ ] Check all six sections at narrow 320px widths and data-heavy table/dialog states.
+- [ ] Apply Purple (#5D0096) and Red-Orange (#D31710) as the only brand colors throughout the app.
 - [x] Re-read roadmap and report the remaining parity and responsive-testing limits honestly.
