@@ -1,5 +1,8 @@
 - [x] Inspect the original archive and verify the location dataset and management feature inventory.
 - [x] Implement the browser-only Sholok app with local persistence and the management sections.
-- [ ] Increase text sizes for readability without breaking compact screens.
-- [ ] Verify rate-group creation, zone assignment, rate editing, and responsive layouts in the preview.
-- [ ] Re-read roadmap and report any remaining unverified details honestly.
+- [x] Increase text sizes for readability without breaking compact screens.
+- [x] Verify rate-group creation, zone assignment, individual rate editing, and local saving in the preview.
+- [x] Check 375px mobile and 768px tablet layouts, including the labeled navigation drawer.
+- [ ] Check all six sections at narrow 320px widths and data-heavy table/dialog states.
+- [ ] Apply Purple (#5D0096) and Red-Orange (#D31710) as the only brand colors throughout the app.
+- [x] Re-read roadmap and report the remaining parity and responsive-testing limits honestly.
