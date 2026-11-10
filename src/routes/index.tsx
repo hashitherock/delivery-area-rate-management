@@ -187,7 +187,7 @@ function SholokApp() {
               <h1>{title}</h1>
             </div>
           </div>
-          <div className="topbar-meta"><span className="local-badge"><ShieldCheck /> Data stored in this browser</span><span className="avatar-mark">S</span></div>
+          <div className="topbar-meta"><span className="avatar-mark">S</span></div>
         </header>
 
         <div className="page-content">
@@ -213,7 +213,7 @@ function Dashboard({ state, areas, assignments, onReport }: { state: SholokState
   const enabled = areas.filter((area) => statusFor(state, area.id)).length;
   const coverage = areas.length ? (assigned.size / areas.length) * 100 : 0;
   const metrics = [
-    { label: "Divisions", value: "08", note: "Bangladesh regions", icon: MapPin, color: "mint" },
+    { label: "Divisions", value: "08", note: "Bangladesh regions", icon: MapPin, color: "purple" },
     { label: "Districts", value: countDistricts(state).toLocaleString(), note: `${state.customDistricts.length} custom`, icon: Store, color: "blue" },
     { label: "Delivery areas", value: areas.length.toLocaleString(), note: `${enabled.toLocaleString()} enabled`, icon: Truck, color: "gold" },
     { label: "Rate groups", value: Object.keys(state.groups).length.toString(), note: `of ${MAX_RATE_GROUPS} available`, icon: Users, color: "rose" },
