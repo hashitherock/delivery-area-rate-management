@@ -5,4 +5,6 @@
 - [x] Check 375px mobile and 768px tablet layouts, including the labeled navigation drawer.
 - [ ] Check all six sections at narrow 320px widths and data-heavy table/dialog states.
 - [ ] Apply Purple (#5D0096) and Red-Orange (#D31710) as the only brand colors throughout the app.
+- [ ] Audit and exercise all features; report any remaining behavior or viewport limits.
+- [ ] Remove the visible browser-storage phrase and review visible wording for unwanted text.
 - [x] Re-read roadmap and report the remaining parity and responsive-testing limits honestly.
