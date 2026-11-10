@@ -247,6 +247,18 @@ export function statusFor(state: SholokState, areaId: string): boolean {
   return state.statuses[areaId] !== false;
 }
 
+export function removeCustomArea(state: SholokState, areaId: string): SholokState {
+  const customAreas = state.customAreas.filter((area) => area.id !== areaId);
+  const usedDistricts = new Set(customAreas.map((area) => districtKey(area.division, area.district)));
+  return {
+    ...state,
+    customAreas,
+    customDistricts: state.customDistricts.filter((district) => usedDistricts.has(districtKey(district.division, district.name))),
+    assignments: Object.fromEntries(Object.entries(state.assignments).filter(([, assignment]) => assignment.areaId !== areaId)),
+    statuses: Object.fromEntries(Object.entries(state.statuses).filter(([id]) => id !== areaId)),
+  };
+}
+
 export function validAssignments(state: SholokState): Assignment[] {
   const areaIds = new Set(allAreas(state).map((area) => area.id));
   return Object.values(state.assignments).filter((assignment) => {
