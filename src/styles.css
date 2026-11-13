@@ -146,7 +146,7 @@ input, select { color: var(--foreground); }
 .metric-card { position: relative; display: flex; min-height: 104px; align-items: flex-start; gap: 12px; padding: 16px 15px; border: 1px solid var(--border); border-radius: 5px; background: var(--card); box-shadow: var(--shadow-soft); }
 .metric-icon { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; border-radius: 5px; }
 .metric-icon svg { width: 17px; height: 17px; }
-.metric-icon.purple { background: var(--purple-soft); color: var(--purple-ink); }
+.metric-icon.purple-soft { background: var(--purple-soft); color: var(--purple-ink); }
 .metric-icon.purple-muted { background: var(--purple-muted); color: var(--purple-muted-ink); }
 .metric-icon.orange-soft { background: var(--orange-soft); color: var(--orange-ink); }
 .metric-icon.red-orange-soft { background: var(--red-orange-soft); color: var(--red-orange-ink); }
@@ -257,7 +257,7 @@ input, select { color: var(--foreground); }
 .group-summary strong small { color: var(--muted-foreground); font-size: 12px; font-weight: 500; }
 .limit-track { height: 5px; }
 .limit-track i { display: block; height: 100%; border-radius: inherit; background: var(--primary); }
-.limit-count { margin-left: 4px; padding: 2px 5px; border-radius: 3px; background: oklch(1 0 0 / 0.18); font-size: 12px; }
+.limit-count { margin-left: 4px; padding: 2px 5px; border-radius: 3px; background: var(--surface-on-dark-subtle); font-size: 12px; }
 .rate-group-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .rate-group-card { min-width: 0; padding: 15px; border: 1px solid var(--border); border-radius: 5px; background: var(--card); box-shadow: var(--shadow-soft); }
 .group-card-top { display: flex; align-items: center; gap: 9px; }
@@ -400,6 +400,9 @@ input, select { color: var(--foreground); }
 .storage-warning span { display: grid; flex: 1; gap: 2px; }
 .storage-warning strong { font-size: 12px; }
 .storage-warning small { font-size: 12px; }
+.toaster [data-sonner-toast][data-type="success"] { border-color: var(--border) !important; background: var(--purple-soft) !important; color: var(--primary) !important; }
+.toaster [data-sonner-toast][data-type="success"] svg { color: var(--primary) !important; }
+.toaster [data-sonner-toast][data-type="error"] { border-color: var(--orange-soft-border) !important; background: var(--orange-soft) !important; color: var(--destructive) !important; }
 .mobile-scrim { display: none; }
 
 @media (min-width: 1600px) {
