@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  allAreas,
   locations,
   locationCounts,
   isValidLocationDataset,
@@ -82,5 +83,21 @@ describe("Sholok custom-area removal", () => {
     expect(result.assignments).toEqual({});
     expect(result.customDistricts).toEqual([]);
     expect(() => validateState({ version: 1, data: result })).not.toThrow();
+  });
+
+  it("keeps a custom district while another saved area still uses it", () => {
+    const initial = makeInitialState();
+    const areaA = { id: "custom-a", division: "Dhaka", district: "Shared District", area: "Area A", source: "custom" as const };
+    const areaB = { id: "custom-b", division: "Dhaka", district: "Shared District", area: "Area B", source: "custom" as const };
+    const state = {
+      ...initial,
+      customAreas: [areaA, areaB],
+      customDistricts: [{ id: "district-shared", division: "Dhaka", name: "Shared District" }],
+    };
+
+    const result = removeCustomArea(state, areaA.id);
+
+    expect(allAreas(result).map((area) => area.id)).toContain(areaB.id);
+    expect(result.customDistricts).toEqual(state.customDistricts);
   });
 });
